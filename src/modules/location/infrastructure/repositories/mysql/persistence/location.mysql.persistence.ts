@@ -20,7 +20,7 @@ import { statusCode } from '../../../../../../settings/environments/status-code'
 import { DatabaseAbstract } from '../../../../../../shared/connections/database/abstract/abstract.database';
 
 @Injectable()
-export class LocationPostgreSqlPersistence implements InterfaceLocationRepository {
+export class LocationMySqlPersistence implements InterfaceLocationRepository {
   constructor(private readonly databaseService: DatabaseAbstract) {}
 
   async getAllCountries(): Promise<CountryResponse[]> {
@@ -148,7 +148,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT canton_id AS "canton_id", nombre AS "canton_name", provincia_id AS "province_id"
       FROM canton
-      WHERE canton_id = $1;`;
+      WHERE canton_id = ?;`;
 
       const result: CantonSqlResult[] =
         await this.databaseService.query<CantonSqlResult>(query, [cantonId]);
@@ -173,12 +173,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT canton_id AS "canton_id", nombre AS "canton_name", provincia_id AS "province_id"
       FROM canton
-      WHERE nombre = $1;`;
+      WHERE nombre = ?;`;
 
       const result: CantonSqlResult[] =
-        await this.databaseService.query<CantonSqlResult>(query, [
-          cantonName,
-        ]);
+        await this.databaseService.query<CantonSqlResult>(query, [cantonName]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -200,12 +198,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT canton_id AS "canton_id", nombre AS "canton_name", provincia_id AS "province_id"
       FROM canton
-      WHERE provincia_id = $1;`;
+      WHERE provincia_id = ?;`;
 
       const result: CantonSqlResult[] =
-        await this.databaseService.query<CantonSqlResult>(query, [
-          provinceId,
-        ]);
+        await this.databaseService.query<CantonSqlResult>(query, [provinceId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -227,12 +223,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT pais_id AS "country_id", nombre AS "country_name"
       FROM pais
-      WHERE pais_id = $1;`;
+      WHERE pais_id = ?;`;
 
       const result: CountrySqlResult[] =
-        await this.databaseService.query<CountrySqlResult>(query, [
-          countryId,
-        ]);
+        await this.databaseService.query<CountrySqlResult>(query, [countryId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -254,12 +248,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT pais_id AS "country_id", nombre AS "country_name"
       FROM pais
-      WHERE nombre = $1;`;
+      WHERE nombre = ?;`;
 
       const result: CountrySqlResult[] =
-        await this.databaseService.query<CountrySqlResult>(query, [
-          countryName,
-        ]);
+        await this.databaseService.query<CountrySqlResult>(query, [countryName]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -281,7 +273,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT parroquia_id AS "parish_id", nombre AS "parish_name", canton_id AS "canton_id", parroquia.tipo_parroquia_id AS "parish_type_id"
       FROM parroquia
-      WHERE parroquia_id = $1;`;
+      WHERE parroquia_id = ?;`;
 
       const result: ParishSqlResult[] =
         await this.databaseService.query<ParishSqlResult>(query, [parishId]);
@@ -306,12 +298,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT parroquia_id AS "parish_id", nombre AS "parish_name", canton_id AS "canton_id", parroquia.tipo_parroquia_id AS "parish_type_id"
       FROM parroquia
-      WHERE nombre = $1;`;
+      WHERE nombre = ?;`;
 
       const result: ParishSqlResult[] =
-        await this.databaseService.query<ParishSqlResult>(query, [
-          parishName,
-        ]);
+        await this.databaseService.query<ParishSqlResult>(query, [parishName]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -333,7 +323,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT tipo_parroquia_id AS "parish_type_id", nombre AS "parish_type_name"
       FROM tipo_parroquia
-      WHERE tipo_parroquia_id = $1;`;
+      WHERE tipo_parroquia_id = ?;`;
 
       const result: ParishTypeSqlResult[] =
         await this.databaseService.query<ParishTypeSqlResult>(query, [
@@ -360,7 +350,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT tipo_parroquia_id AS "parish_type_id", nombre AS "parish_type_name"
       FROM tipo_parroquia
-      WHERE nombre = $1;`;
+      WHERE nombre = ?;`;
 
       const result: ParishTypeSqlResult[] =
         await this.databaseService.query<ParishTypeSqlResult>(query, [
@@ -410,7 +400,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT parroquia_id AS "parish_id", nombre AS "parish_name", canton_id AS "canton_id", parroquia.tipo_parroquia_id AS "parish_type_id"
       FROM parroquia
-      WHERE canton_id = $1;`;
+      WHERE canton_id = ?;`;
 
       const result: ParishSqlResult[] =
         await this.databaseService.query<ParishSqlResult>(query, [cantonId]);
@@ -435,12 +425,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT provincia_id AS "province_id", nombre AS "province_name", pais_id AS "country_id"
       FROM provincia
-      WHERE provincia_id = $1;`;
+      WHERE provincia_id = ?;`;
 
       const result: ProvinceSqlResult[] =
-        await this.databaseService.query<ProvinceSqlResult>(query, [
-          provinceId,
-        ]);
+        await this.databaseService.query<ProvinceSqlResult>(query, [provinceId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -462,12 +450,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT provincia_id AS "province_id", nombre AS "province_name", pais_id AS "country_id"
       FROM provincia
-      WHERE nombre = $1;`;
+      WHERE nombre = ?;`;
 
       const result: ProvinceSqlResult[] =
-        await this.databaseService.query<ProvinceSqlResult>(query, [
-          provinceName,
-        ]);
+        await this.databaseService.query<ProvinceSqlResult>(query, [provinceName]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -489,12 +475,10 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
     try {
       const query: string = `SELECT provincia_id AS "province_id", nombre AS "province_name", pais_id AS "country_id"
       FROM provincia
-      WHERE pais_id = $1;`;
+      WHERE pais_id = ?;`;
 
       const result: ProvinceSqlResult[] =
-        await this.databaseService.query<ProvinceSqlResult>(query, [
-          countryId,
-        ]);
+        await this.databaseService.query<ProvinceSqlResult>(query, [countryId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({

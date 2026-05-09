@@ -25,6 +25,7 @@ interface EnvironmentsVariables {
   LOCATION_GLOBAL_KAFKA_CLIENT: string;
   LOCATION_GLOBAL_KAFKA_CLIENT_ID: string;
   LOCATION_GLOBAL_KAFKA_GROUP_ID: string;
+  DATABASE_TYPE: 'mysql' | 'postgres';
 }
 
 const environmentsSchema = Joi.object<EnvironmentsVariables>({
@@ -46,6 +47,7 @@ const environmentsSchema = Joi.object<EnvironmentsVariables>({
   LOCATION_GLOBAL_KAFKA_CLIENT: Joi.string().required(),
   LOCATION_GLOBAL_KAFKA_CLIENT_ID: Joi.string().required(),
   LOCATION_GLOBAL_KAFKA_GROUP_ID: Joi.string().required(),
+  DATABASE_TYPE: Joi.string().valid('mysql', 'postgres').default('postgres'),
 }).unknown(true);
 
 const { error, value: envVars } = environmentsSchema.validate(process.env);
@@ -72,4 +74,5 @@ export const environments: EnvironmentsVariables = {
   LOCATION_GLOBAL_KAFKA_CLIENT: envVars.LOCATION_GLOBAL_KAFKA_CLIENT,
   KAFKA_BROKER_EXTERNAL: envVars.KAFKA_BROKER_EXTERNAL,
   KAFKA_BROKER_INTERNAL: envVars.KAFKA_BROKER_INTERNAL,
+  DATABASE_TYPE: envVars.DATABASE_TYPE as 'mysql' | 'postgres',
 };
