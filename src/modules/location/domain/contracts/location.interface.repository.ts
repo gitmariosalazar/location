@@ -1,5 +1,6 @@
 import {
   CantonResponse,
+  CenterLocationResponse,
   CountryResponse,
   ParishResponse,
   ParishTypeResponse,
@@ -31,4 +32,5 @@ export interface InterfaceLocationRepository {
   getAllCantons(): Promise<CantonResponse[]>;
   getAllParishes(): Promise<ParishResponse[]>;
   getAllParishTypes(): Promise<ParishTypeResponse[]>;
+  getCenterLLocationIncidents(): Promise<CenterLocationResponse>;
 }

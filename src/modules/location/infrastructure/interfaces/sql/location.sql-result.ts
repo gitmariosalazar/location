@@ -26,3 +26,9 @@ export interface ParishSqlResult {
   canton_id: string;
   parish_type_id: string;
 }
+
+export interface CenterLocationSQLResult {
+  center_lat: number;
+  center_lng: number;
+  count_data: number;
+}

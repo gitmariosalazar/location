@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InterfaceLocationRepository } from '../../../../domain/contracts/location.interface.repository';
 import {
   CantonResponse,
+  CenterLocationResponse,
   CountryResponse,
   ParishResponse,
   ParishTypeResponse,
@@ -9,6 +10,7 @@ import {
 } from '../../../../domain/schemas/dto/response/location.response';
 import {
   CantonSqlResult,
+  CenterLocationSQLResult,
   CountrySqlResult,
   ParishSqlResult,
   ParishTypeSqlResult,
@@ -251,7 +253,9 @@ export class LocationMySqlPersistence implements InterfaceLocationRepository {
       WHERE nombre = ?;`;
 
       const result: CountrySqlResult[] =
-        await this.databaseService.query<CountrySqlResult>(query, [countryName]);
+        await this.databaseService.query<CountrySqlResult>(query, [
+          countryName,
+        ]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -428,7 +432,9 @@ export class LocationMySqlPersistence implements InterfaceLocationRepository {
       WHERE provincia_id = ?;`;
 
       const result: ProvinceSqlResult[] =
-        await this.databaseService.query<ProvinceSqlResult>(query, [provinceId]);
+        await this.databaseService.query<ProvinceSqlResult>(query, [
+          provinceId,
+        ]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -453,7 +459,9 @@ export class LocationMySqlPersistence implements InterfaceLocationRepository {
       WHERE nombre = ?;`;
 
       const result: ProvinceSqlResult[] =
-        await this.databaseService.query<ProvinceSqlResult>(query, [provinceName]);
+        await this.databaseService.query<ProvinceSqlResult>(query, [
+          provinceName,
+        ]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -491,6 +499,35 @@ export class LocationMySqlPersistence implements InterfaceLocationRepository {
         SqlLocationAdapter.toProvinceResponse(row),
       );
       return provinces;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getCenterLLocationIncidents(): Promise<CenterLocationResponse> {
+    try {
+      const query: string = `
+        SELECT
+          ST_Y(ST_Centroid(ST_Collect(coordenadas)))::numeric(10,6) AS center_lat,
+          ST_X(ST_Centroid(ST_Collect(coordenadas)))::numeric(10,6) AS center_lng,
+          COUNT(*) AS count_data
+        FROM incidente_medidor
+        WHERE coordenadas IS NOT NULL AND fecha_resolucion IS NULL;
+      `;
+
+      const result: CenterLocationSQLResult[] =
+        await this.databaseService.query<CenterLocationSQLResult>(query);
+
+      if (!result || result.length === 0) {
+        return {
+          centerLat: 0,
+          centerLng: 0,
+          countData: 0,
+        };
+      }
+
+      const centerLocation: CenterLocationResponse =
+        SqlLocationAdapter.toCenterLocationResponse(result[0]);
+      return centerLocation;
     } catch (error) {
       throw error;
     }

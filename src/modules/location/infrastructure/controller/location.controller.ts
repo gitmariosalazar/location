@@ -7,6 +7,7 @@ import { LocationException } from '../../domain/exceptions/location.exception';
 import { RpcException } from '@nestjs/microservices/exceptions/rpc-exception';
 import { statusCode } from '../../../../settings/environments/status-code';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { GetCenterLocationUseCase } from '../../application/usecases/get-center-location.use-case';
 
 @Controller('location')
 export class LocationController {
@@ -15,6 +16,7 @@ export class LocationController {
     private readonly getProvincesUseCase: GetProvincesUseCase,
     private readonly getCantonsUseCase: GetCantonsUseCase,
     private readonly getParishesUseCase: GetParishesUseCase,
+    private readonly getCenterLocationUseCase: GetCenterLocationUseCase,
   ) {}
 
   private handleException(error: any): never {
@@ -170,6 +172,15 @@ export class LocationController {
   async getParishById(@Payload() parishId: string) {
     try {
       return await this.getParishesUseCase.getById(parishId);
+    } catch (error) {
+      this.handleException(error);
+    }
+  }
+
+  @MessagePattern('location.get-center-location-incidents')
+  async getCenterLocation() {
+    try {
+      return await this.getCenterLocationUseCase.getCenterLocationIncidents();
     } catch (error) {
       this.handleException(error);
     }

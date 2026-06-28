@@ -7,6 +7,7 @@ import { GetParishesUseCase } from '../../../application/usecases/get-parish.use
 import { GetProvincesUseCase } from '../../../application/usecases/get-provinces.use-case';
 import { LocationMySqlPersistence } from '../../repositories/mysql/persistence/location.mysql.persistence';
 import { DatabasePersistenceModule } from '../../../../../shared/connections/database/database-persistence.module';
+import { GetCenterLocationUseCase } from '../../../application/usecases/get-center-location.use-case';
 
 @Module({
   imports: [KafkaServiceModule, DatabasePersistenceModule],
@@ -16,6 +17,7 @@ import { DatabasePersistenceModule } from '../../../../../shared/connections/dat
     GetCountriesUseCase,
     GetParishesUseCase,
     GetProvincesUseCase,
+    GetCenterLocationUseCase,
     {
       provide: 'LocationRepository',
       useClass: LocationMySqlPersistence,

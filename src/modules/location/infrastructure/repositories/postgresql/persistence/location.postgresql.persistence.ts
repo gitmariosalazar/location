@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InterfaceLocationRepository } from '../../../../domain/contracts/location.interface.repository';
 import {
   CantonResponse,
+  CenterLocationResponse,
   CountryResponse,
   ParishResponse,
   ParishTypeResponse,
@@ -9,6 +10,7 @@ import {
 } from '../../../../domain/schemas/dto/response/location.response';
 import {
   CantonSqlResult,
+  CenterLocationSQLResult,
   CountrySqlResult,
   ParishSqlResult,
   ParishTypeSqlResult,
@@ -176,9 +178,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
       WHERE nombre = $1;`;
 
       const result: CantonSqlResult[] =
-        await this.databaseService.query<CantonSqlResult>(query, [
-          cantonName,
-        ]);
+        await this.databaseService.query<CantonSqlResult>(query, [cantonName]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -203,9 +203,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
       WHERE provincia_id = $1;`;
 
       const result: CantonSqlResult[] =
-        await this.databaseService.query<CantonSqlResult>(query, [
-          provinceId,
-        ]);
+        await this.databaseService.query<CantonSqlResult>(query, [provinceId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -230,9 +228,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
       WHERE pais_id = $1;`;
 
       const result: CountrySqlResult[] =
-        await this.databaseService.query<CountrySqlResult>(query, [
-          countryId,
-        ]);
+        await this.databaseService.query<CountrySqlResult>(query, [countryId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -309,9 +305,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
       WHERE nombre = $1;`;
 
       const result: ParishSqlResult[] =
-        await this.databaseService.query<ParishSqlResult>(query, [
-          parishName,
-        ]);
+        await this.databaseService.query<ParishSqlResult>(query, [parishName]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -492,9 +486,7 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
       WHERE pais_id = $1;`;
 
       const result: ProvinceSqlResult[] =
-        await this.databaseService.query<ProvinceSqlResult>(query, [
-          countryId,
-        ]);
+        await this.databaseService.query<ProvinceSqlResult>(query, [countryId]);
 
       if (!result || result.length === 0) {
         throw new RpcException({
@@ -507,6 +499,39 @@ export class LocationPostgreSqlPersistence implements InterfaceLocationRepositor
         SqlLocationAdapter.toProvinceResponse(row),
       );
       return provinces;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getCenterLLocationIncidents(): Promise<CenterLocationResponse> {
+    try {
+      const query: string = /*sql*/ `
+        SELECT
+          ST_Y(ST_Centroid(ST_Collect(coordenadas)))::numeric(10,6) AS center_lat,
+          ST_X(ST_Centroid(ST_Collect(coordenadas)))::numeric(10,6) AS center_lng,
+          COUNT(*) AS count_data
+        FROM incidente_medidor
+        WHERE coordenadas IS NOT NULL AND fecha_resolucion IS NULL;
+      `;
+
+      const result: CenterLocationSQLResult[] =
+        await this.databaseService.query<CenterLocationSQLResult>(query);
+      const FALLBACK_CENTER_ANTONIO_ANTE = {
+        lat: 0.3590087,
+        lng: -78.1958529,
+      };
+
+      if (!result || result.length === 0) {
+        return {
+          centerLat: FALLBACK_CENTER_ANTONIO_ANTE.lat,
+          centerLng: FALLBACK_CENTER_ANTONIO_ANTE.lng,
+          countData: 0,
+        };
+      }
+
+      const centerLocation: CenterLocationResponse =
+        SqlLocationAdapter.toCenterLocationResponse(result[0]);
+      return centerLocation;
     } catch (error) {
       throw error;
     }

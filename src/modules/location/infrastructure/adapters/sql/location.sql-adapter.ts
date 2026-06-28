@@ -1,5 +1,6 @@
 import {
   CantonResponse,
+  CenterLocationResponse,
   CountryResponse,
   ParishResponse,
   ParishTypeResponse,
@@ -7,6 +8,7 @@ import {
 } from '../../../domain/schemas/dto/response/location.response';
 import {
   CantonSqlResult,
+  CenterLocationSQLResult,
   CountrySqlResult,
   ParishSqlResult,
   ParishTypeSqlResult,
@@ -52,6 +54,16 @@ export class SqlLocationAdapter {
       parishName: sqlResult.parish_name,
       cantonId: sqlResult.canton_id,
       parishTypeId: sqlResult.parish_type_id,
+    };
+  }
+
+  static toCenterLocationResponse(
+    sqlResult: CenterLocationSQLResult,
+  ): CenterLocationResponse {
+    return {
+      centerLat: sqlResult.center_lat,
+      centerLng: sqlResult.center_lng,
+      countData: sqlResult.count_data,
     };
   }
 }
